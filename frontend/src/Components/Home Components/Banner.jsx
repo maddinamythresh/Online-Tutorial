@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import bannerImage from '../../assets/banner.webp'
 
 export default function Banner() {
@@ -11,12 +12,12 @@ export default function Banner() {
   
         {/* Content */}
         <div className="relative z-10 max-w-2xl">
-          <h1 className="text-4xl font-bold">Upgrade Your Skills with Udemy</h1>
+          <h1 className="text-4xl font-bold">Upgrade Your Skills with Learnify</h1>
           <p className="mt-4 text-lg text-gray-200">
             Learn from industry experts at your own pace.
           </p>
           <button className="mt-6 px-6 py-3 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition">
-            Explore Courses
+            <Link to="/explore-courses">Explore Courses</Link>
           </button>
         </div>
       </section>

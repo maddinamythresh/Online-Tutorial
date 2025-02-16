@@ -10,7 +10,6 @@ function LandingPage() {
     <div>
       <Header/>
       <Banner />
-      
       <FeaturedCourses />
       <Testimonials />
       <CallToAction />

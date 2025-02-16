@@ -1,28 +1,67 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function SignUp() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate(); // Initialize navigate for programmatic routing
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      alert("Passwords don't match!");
+    
+    // Create a new FormData object from the form element
+    const formData = new FormData(e.target); // e.target refers to the form
+
+    // Convert FormData to a plain object (optional)
+    const formObject = Object.fromEntries(formData.entries());
+
+    // Check if passwords match
+    if (formObject.password !== formObject['confirm-password']) {
+      setError('Passwords do not match');
       return;
     }
-    // Add your sign-up logic here
-    console.log('Signing up with:', email, password);
+
+    // Clear previous error message
+    setError('');
+
+    // Example of sign-up data
+    const userData = {
+      email: formObject.email,
+      password: formObject.password,
+    };
+
+    try {
+      const response = await fetch('http://localhost:3001/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        // Handle server-side error
+        const data = await response.json();
+        setError(data.message || 'Sign-up failed');
+        return;
+      }
+
+      // If sign-up is successful, log success and navigate to login page
+      
+      navigate('/login'); // Redirect to login page
+    } catch (error) {
+      setError('Something went wrong, please try again.');
+      console.error(error);
+    }
   };
 
   return (
-    <div
-      className="min-h-screen bg-gradient-to-r from-blue-50 to-blue-100 flex items-center justify-center"
-    >
+    <div className="min-h-screen bg-gradient-to-r from-blue-50 to-blue-100 flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full border border-gray-200">
         <h2 className="text-3xl font-semibold text-center text-gray-800 mb-6">Sign Up</h2>
         
+        {/* Display error message */}
+        {error && <div className="mb-4 text-red-600 text-center">{error}</div>}
+
         <form onSubmit={handleSignUp}>
           {/* Email Input */}
           <div className="mb-4">
@@ -30,9 +69,7 @@ function SignUp() {
             <input
               type="email"
               id="email"
-              name="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              name="email" // Name attribute is used by FormData
               required
               className="w-full mt-2 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -44,9 +81,7 @@ function SignUp() {
             <input
               type="password"
               id="password"
-              name="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              name="password" // Name attribute is used by FormData
               required
               className="w-full mt-2 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -58,9 +93,7 @@ function SignUp() {
             <input
               type="password"
               id="confirm-password"
-              name="confirm-password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              name="confirm-password" // Name attribute is used by FormData
               required
               className="w-full mt-2 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
